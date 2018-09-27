@@ -53,9 +53,9 @@ function Behavior:new(Parent)--创建动作
 		continuity=false,--如果此项设置为true,则协程执行后不会自动销毁,再次运行这个动作的时候会继续上次的接着做
 		co=nil,
 		blackboard=Parent.blackboard,
-		checkOnDelay = Tigger:new(Parent.blackboard),
-		checkOnTouchDown = Tigger:new(Parent.blackboard),
-		checkOnTouchUp = Tigger:new(Parent.blackboard),
+		tiggerOnDelay = Tigger:new(Parent.blackboard),
+		tiggerOnTouchDown = Tigger:new(Parent.blackboard),
+		tiggerOnTouchUp = Tigger:new(Parent.blackboard),
 	}
 	setmetatable(o,{__index = self} )
 
@@ -64,40 +64,54 @@ end
 
 function Behavior:setServer(ServerFunction)--这里传入Function没有参数,数据交互使用黑板对象
 	if type(ServerFunction)=="function" then
-		sysLog("Server设置完毕")
 		self.server=ServerFunction
 	end
 end
 
 function Behavior:run()
-	self:setCheck()--设置检查器
+	self:setTigger()--设置检查器
 	if self.co==nil or not self.continuity or coroutine.status(self.co)=="dead" then--重新建立协程
-		self.co=nil
 		self.co=coroutine.create(self.server)
 		coroutine.resume(self.co,self.blackboard)--开始运行协程,并且传入黑板数据
+		if coroutine.status(self.co)=="dead" then 
+			--sysLog("协程运行结束,销毁对象")
+			self.co=nil 
+		end
 	else--重新唤起协程
 		coroutine.resume(self.co)
 	end
 end
 
-function Behavior:setContinuity(Flag)--设置行为是否可以连续运行(跳出不销毁)
+function Behavior:setContinuity(Flag)--设置行为是否可以连续运行(中断后不销毁)
 	self.continuity=Flag
 end
 
-function Behavior.stop()--停止行为
+function Behavior.stop()--停止当前行为
 	if coroutine.isyieldable() then
-		Behavior.resetCheck()--重置检查器
+		Behavior.resetTigger()--重置检查器
 		coroutine.yield()
 	end
 end
 
-function Behavior:setCheck()--设置检查器
-	_addToDelay_ = function() if self.checkOnDelay:check() then Behavior.stop() end end
-	_addToTouchDown_ = function() if self.checkOnTouchDown:check() then Behavior.stop() end end
-	_addToTouchUp_ = function() if self.checkOnTouchUp:check() then Behavior.stop() end end
+function Behavior:setTigger()--设置检查器
+	_addToDelay_ = function() if self.tiggerOnDelay:check() then Behavior.stop() end end
+	_addToTouchDown_ = function() if self.tiggerOnTouchDown:check() then Behavior.stop() end end
+	_addToTouchUp_ = function() if self.tiggerOnTouchUp:check() then Behavior.stop() end end
 end
 
-function Behavior.resetCheck()--重置检查器
+function Behavior:getTiggerOnDelay()--设置检查器
+	return self.tiggerOnDelay
+end
+
+function Behavior:getTiggerOnTouchDown()--设置检查器
+	return self.tiggerOnTouchDown
+end
+
+function Behavior:getTiggerOnTouchUp()--设置检查器
+	return self.tiggerOnTouchUp
+end
+
+function Behavior.resetTigger()--重置检查器
 	_addToDelay_ = function() end
 	_addToTouchDown_ = function () end
 	_addToTouchUp_ = function () end

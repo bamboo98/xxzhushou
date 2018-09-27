@@ -1,135 +1,171 @@
+
+sysLog("å¼€å§‹è¿è¡Œ")
 require "controller"
 init("0",1)
-
 --[[
-ÓĞ3¸öº¯ÊıĞèÒª¼ÓÔÚ×Ô¼º·â×°µÄµã»÷·½·¨ºÍÑÓ³Ù·½·¨Àï
-_addToTouchDown_()--¼ÓÔÚtouchdownÖ®Ç°
-_addToTouchUp_()--¼ÓÔÚtouchUpÖ®ºó
-_addToDelay_()--¼ÓÔÚmSleepÇ°ºó¶¼ĞĞ
+æœ‰3ä¸ªå‡½æ•°éœ€è¦åŠ åœ¨è‡ªå·±å°è£…çš„ç‚¹å‡»æ–¹æ³•å’Œå»¶è¿Ÿæ–¹æ³•é‡Œ
+_addToTouchDown_()--åŠ åœ¨touchdownä¹‹å‰
+_addToTouchUp_()--åŠ åœ¨touchUpä¹‹å
+_addToDelay_()--åŠ åœ¨mSleepå‰åéƒ½è¡Œ
 ]]
 
 
 function click(x,y)
-	_addToTouchDown_()--¼ÓÔÚtouchdownÖ®Ç°
+	_addToTouchDown_()--åŠ åœ¨touchdownä¹‹å‰
 	touchDown(1,x,y)
 
 	mSleep(50)
 
 	touchUp(1,x,y)
 	mSleep(10)
-	_addToTouchUp_()--¼ÓÔÚtouchUpÖ®ºó
+	_addToTouchUp_()--åŠ åœ¨touchUpä¹‹å
 end
 
 function delay(Second)
-	--_addToDelay_()--Ç°ºóÎŞËùÎ½
+	--_addToDelay_()--å‰åæ— æ‰€è°“
 	mSleep(Second*1000)
-	_addToDelay_()--Ç°ºóÎŞËùÎ½
+	_addToDelay_()--å‰åæ— æ‰€è°“
 end
 
 
 
---[[            ºÚ°åºÍÁ÷³Ì´´½¨                 ]]
-local bk=Blackboard:new()--ĞÂ½¨Ò»¸öºÚ°å
-local seq1=Sequence:new()--ĞÂ½¨Ò»¸öÔËĞĞÁ÷³Ì
-local scene1_seq=Sequence:new()--ĞÂ½¨Ò»¸öÔËĞĞÁ÷³Ì
-
-
---[[            ºÚ°å±äÁ¿³õÊ¼»¯                 ]]
-bk:setValue("Æô¶¯Ê±¼ä",mTime())--ÔÚºÚ°åÉÏ´æÒ»Ğ©±äÁ¿
-bk:setValue("¼Æ´Î",0)
-bk:setValue("¹¦ÄÜ","Ê¾Àı")
-
-
---[[            ³¡¾°´´½¨                 ]]
-local scene1=bk:createScene()--´´½¨Ò»¸ö³¡¾°
-local scene2=bk:createScene()--´´½¨Ò»¸ö³¡¾°
-local scene1_1=bk:createScene()--´´½¨Ò»¸ö³¡¾°
-local scene1_2=bk:createScene()--´´½¨Ò»¸ö³¡¾°
-
-
---[[            ³¡¾°ºÍÁ÷³Ì°ó¶¨                 ]]
-seq1:addScene(scene1)--½«scene1°ó¶¨ÖÁÁ÷³Ìseq1
-seq1:addScene(scene2)--½«scene2°ó¶¨ÖÁÁ÷³Ìseq1
-scene1_seq:addScene(scene1_1)--½«scene1_1°ó¶¨ÖÁÁ÷³Ìscene1_seq
-scene1_seq:addScene(scene1_2)--½«scene1_2°ó¶¨ÖÁÁ÷³Ìscene1_seq
-
-scene1:addSequence(scene1_seq)--½«Á÷³Ìscene1_seqÉèÖÃÎª³¡¾°scene1µÄ×ÓÁ÷³Ì
-
-
---[[            ÉèÖÃ³¡¾°µÄ´¥·¢Æ÷                 ]]
---´¥·¢Æ÷µÄÄ¬ÈÏ·µ»ØÖµ¾ùÎªfalse
---ÉèÖÃscene1µÄÔËĞĞ´¥·¢Æ÷¹æÔò
-scene1:getStartTrigger():setRule(
-	function(Blackboard)
-		return Blackboard:getValue("¹¦ÄÜ")=="Ê¾Àı" and Blackboard:getValue("¼Æ´Î")==0--µ±ºÚ°åµÄ"¹¦ÄÜ"×Ö¶ÎÎª"Ê¾Àı",²¢ÇÒ¼Æ´ÎÎª0Ê±,´¥·¢³É¹¦
-	end)--ÉèÖÃ´¥·¢Æ÷¹æÔò,´«Èëº¯Êı,¸Ãº¯ÊıÓĞÇÒ½öÓĞÒ»¸ö²ÎÊıBlackboard,Îªscene1µÄºÚ°å,·µ»ØÖµÎªtrue»òfalse,[trueÎª³É¹¦´¥·¢,falseÎªÊ§°Ü]
-
---ÉèÖÃscene1µÄ½áÊø´¥·¢Æ÷¹æÔò
-scene1:getEndTrigger():setRule(
-	function(Blackboard)
-		return Blackboard:getValue("¼Æ´Î")==1--µ±ºÚ°åµÄ"¼Æ´Î"×Ö¶ÎÎª1Ê±,´¥·¢³É¹¦
-	end)
-
---ÉèÖÃscene1_1µÄÔËĞĞ´¥·¢Æ÷¹æÔò
-scene1_1:getStartTrigger():setRule(
-	function(Blackboard)
-		return Blackboard:getValue("¼Æ´Î")==0
-	end)
-
---ÉèÖÃscene1_2µÄÔËĞĞ´¥·¢Æ÷¹æÔò
-scene1_2:getStartTrigger():setRule(
-	function(Blackboard)
-		return Blackboard:getValue("¼Æ´Î")==10
-	end)
-
---ÉèÖÃscene2µÄÔËĞĞ´¥·¢Æ÷¹æÔò
-scene2:getStartTrigger():setRule(
-	function(Blackboard)
-		return Blackboard:getValue("¼Æ´Î")==233
-	end)
-
---ÆÚÍûµÄÔËĞĞË³Ğò,¼Æ´Î=0 -> 1 -> 10 -> 233 -> 10 ->Í£Ö¹
-
---[[            ÉèÖÃ³¡¾°µÄĞĞÎª                ]]
-scene1:getStartingBehavior():setServer(
-	function(Blackboard)
-		Blackboard:setValue("¼Æ´Î",1)
-		sysLog(string.format("From:%s,Behavior:%s,¼Æ´Î=%d","scene1","Starting",Blackboard:getValue("¼Æ´Î")))
-	end)
-scene1:getDoingBehavior():setServer(
-	function(Blackboard)
-		Blackboard:setValue("¼Æ´Î",233333)
-		sysLog(string.format("From:%s,Behavior:%s,¼Æ´Î=%d","scene1","Doing",Blackboard:getValue("¼Æ´Î")))
-	end)
-scene1:getEndingBehavior():setServer(
-	function(Blackboard)
-		Blackboard:setValue("¼Æ´Î",10)
-		sysLog(string.format("From:%s,Behavior:%s,¼Æ´Î=%d","scene1","Ending",Blackboard:getValue("¼Æ´Î")))
-	end)
-scene1_1:getDoingBehavior():setServer(
-	function(Blackboard)
-		Blackboard:setValue("¼Æ´Î",233333)
-		sysLog(string.format("From:%s,Behavior:%s,¼Æ´Î=%d","scene1_1","Doing",Blackboard:getValue("¼Æ´Î")))
-	end)
-scene1_2:getDoingBehavior():setServer(
-	function(Blackboard)
-		Blackboard:setValue("¼Æ´Î",233)
-		sysLog(string.format("From:%s,Behavior:%s,¼Æ´Î=%d","scene1_2","Doing",Blackboard:getValue("¼Æ´Î")))
-	end)
-scene2:getDoingBehavior():setServer(
-	function(Blackboard)
-		Blackboard:setValue("¼Æ´Î",10)
-		sysLog(string.format("From:%s,Behavior:%s,¼Æ´Î=%d","scene2","Doing",Blackboard:getValue("¼Æ´Î")))
-	end)
+--[[            é»‘æ¿åˆ›å»º                 ]]
+local é»‘æ¿=Blackboard:new()--æ–°å»ºä¸€ä¸ªé»‘æ¿
 
 
 
+--[[            é»‘æ¿å˜é‡åˆå§‹åŒ–                 ]]
+é»‘æ¿:setValue("å¯åŠ¨æ—¶é—´",mTime())--åœ¨é»‘æ¿ä¸Šå­˜ä¸€äº›å˜é‡
+é»‘æ¿:setValue("å·²åˆ·æ¬¡æ•°",0)
+é»‘æ¿:setValue("æˆ˜æ–—å¼€å§‹æ—¶é—´",0)
+é»‘æ¿:setValue("å½“å‰æ¸¸æˆåœºæ™¯","ä¸çŸ¥é“ä»€ä¹ˆé¬¼ç•Œé¢")
+é»‘æ¿:setValue("åŠŸèƒ½","åˆ·å¾¡é­‚")
+é»‘æ¿:setValue("ä½“åŠ›",100)
+é»‘æ¿:setValue("æ˜¯å¦ä¹°ä½“åŠ›",true)
+é»‘æ¿:setValue("è¦åˆ·æ¬¡æ•°",10)
+é»‘æ¿:setValue("è¦åˆ·å¤šä¹…",150*1000)
+
+sysLog("é»‘æ¿åˆå§‹åŒ–å®Œæ¯•")
+
+
+--[[            åœºæ™¯å’Œæµç¨‹çš„åˆ›å»ºå’Œç»‘å®š                 ]]
+local ä¸»æµç¨‹=Sequence:new()--æ–°å»ºä¸»è¿è¡Œæµç¨‹
+
+
+local è¿›å…¥å¾¡é­‚=é»‘æ¿:createScene()--åˆ›å»ºä¸€ä¸ªåœºæ™¯
+local è¿”å›ä¸»ç•Œé¢=é»‘æ¿:createScene()--åˆ›å»ºä¸€ä¸ªåœºæ™¯
+ä¸»æµç¨‹:addScene(è¿›å…¥å¾¡é­‚)--åœ¨ä¸»æµç¨‹å†…æ·»åŠ "è¿›å…¥å¾¡é­‚"åœºæ™¯
+ä¸»æµç¨‹:addScene(è¿”å›ä¸»ç•Œé¢)--åœ¨ä¸»æµç¨‹å†…æ·»åŠ "è¿›å…¥å¾¡é­‚"åœºæ™¯
+local è¿›å…¥å¾¡é­‚å…³å¡=é»‘æ¿:createScene()--åˆ›å»ºä¸€ä¸ªåœºæ™¯
+local ä½“åŠ›ä¸è¶³=é»‘æ¿:createScene()--åˆ›å»ºä¸€ä¸ªåœºæ™¯
+local å¾¡é­‚æµç¨‹=Sequence:new()--æ–°å»ºå¾¡é­‚çš„è¿è¡Œæµç¨‹
+è¿›å…¥å¾¡é­‚:addSequence(å¾¡é­‚æµç¨‹)--æŠŠå¾¡é­‚æµç¨‹ç»‘å®šåˆ°è¿›å…¥å¾¡é­‚åœºæ™¯ä¸Š
+å¾¡é­‚æµç¨‹:addScene(è¿›å…¥å¾¡é­‚å…³å¡)--åœ¨å¾¡é­‚æµç¨‹å†…æ·»åŠ "è¿›å…¥å¾¡é­‚å…³å¡"åœºæ™¯
+å¾¡é­‚æµç¨‹:addScene(ä½“åŠ›ä¸è¶³)--åœ¨å¾¡é­‚æµç¨‹å†…æ·»åŠ "è¿›å…¥å¾¡é­‚å…³å¡"åœºæ™¯
+local å¾¡é­‚ç»“ç®—æµç¨‹=Sequence:new()--æ–°å»ºå¾¡é­‚çš„è¿è¡Œæµç¨‹
+local å¾¡é­‚å…³å¡ç»“ç®—=é»‘æ¿:createScene()--åˆ›å»ºä¸€ä¸ªåœºæ™¯
+local ç­‰å¾…æˆ˜æ–—ç»“æŸ=é»‘æ¿:createScene()--åˆ›å»ºä¸€ä¸ªåœºæ™¯
+å¾¡é­‚ç»“ç®—æµç¨‹:addScene(å¾¡é­‚å…³å¡ç»“ç®—)--åœ¨å¾¡é­‚ç»“ç®—æµç¨‹å†…æ·»åŠ "å¾¡é­‚å…³å¡ç»“ç®—åœºæ™¯"
+å¾¡é­‚ç»“ç®—æµç¨‹:addScene(ç­‰å¾…æˆ˜æ–—ç»“æŸ)--æŠŠå¾¡é­‚æµç¨‹ç»‘å®šåˆ°è¿›å…¥å¾¡é­‚åœºæ™¯ä¸Š
+è¿›å…¥å¾¡é­‚å…³å¡:addSequence(å¾¡é­‚ç»“ç®—æµç¨‹)--æŠŠå¾¡é­‚æµç¨‹ç»‘å®šåˆ°è¿›å…¥å¾¡é­‚åœºæ™¯ä¸Š
+
+sysLog("åœºæ™¯æµç¨‹åˆå§‹åŒ–å®Œæ¯•")
 
 
 
---[[            Á÷³ÌÔËĞĞ                 ]]
-sysLog(string.format("From:%s,Behavior:%s,¼Æ´Î=%d","¿ªÊ¼ÔËĞĞ","/",bk:getValue("¼Æ´Î")))
+--[[             åœºæ™¯çš„è§¦å‘å™¨è®¾å®š               ]]
 
-seq1:run()
+è¿”å›ä¸»ç•Œé¢:getStartTrigger():setRule(
+	function(blackboard)
+		return blackboard:getValue("å½“å‰æ¸¸æˆåœºæ™¯")~="ä¸»ç•Œé¢" and (blackboard:getValue("åŠŸèƒ½")=="åˆ·å¾¡é­‚" and blackboard:getValue("å·²åˆ·æ¬¡æ•°")<blackboard:getValue("è¦åˆ·æ¬¡æ•°") and mTime()<blackboard:getValue("è¦åˆ·å¤šä¹…")+blackboard:getValue("å¯åŠ¨æ—¶é—´"))
+	end
+	)
+è¿›å…¥å¾¡é­‚:getStartTrigger():setRule(
+	function(blackboard)
+		return blackboard:getValue("åŠŸèƒ½")=="åˆ·å¾¡é­‚" and blackboard:getValue("å½“å‰æ¸¸æˆåœºæ™¯")=="ä¸»ç•Œé¢" and blackboard:getValue("å·²åˆ·æ¬¡æ•°")<blackboard:getValue("è¦åˆ·æ¬¡æ•°") and mTime()<blackboard:getValue("è¦åˆ·å¤šä¹…")+blackboard:getValue("å¯åŠ¨æ—¶é—´") 
+	end
+	)
+è¿›å…¥å¾¡é­‚å…³å¡:getStartTrigger():setRule(
+	function(blackboard)
+		return blackboard:getValue("å½“å‰æ¸¸æˆåœºæ™¯")=="å¾¡é­‚å…³å¡é€‰æ‹©" and blackboard:getValue("å·²åˆ·æ¬¡æ•°")<blackboard:getValue("è¦åˆ·æ¬¡æ•°") and mTime()<blackboard:getValue("è¦åˆ·å¤šä¹…")+blackboard:getValue("å¯åŠ¨æ—¶é—´")
+	end
+	)
+ä½“åŠ›ä¸è¶³:getStartTrigger():setRule(
+	function(blackboard)
+		return blackboard:getValue("å½“å‰æ¸¸æˆåœºæ™¯")=="ä½“åŠ›ä¸è¶³"
+	end
+	)
+ç­‰å¾…æˆ˜æ–—ç»“æŸ:getStartTrigger():setRule(
+	function(blackboard)
+		return blackboard:getValue("å½“å‰æ¸¸æˆåœºæ™¯")=="æˆ˜æ–—å†…" and mTime()<blackboard:getValue("è¦åˆ·å¤šä¹…")+blackboard:getValue("å¯åŠ¨æ—¶é—´")
+	end
+	)
+å¾¡é­‚å…³å¡ç»“ç®—:getStartTrigger():setRule(
+	function(blackboard)
+		return blackboard:getValue("å½“å‰æ¸¸æˆåœºæ™¯")=="æˆ˜æ–—ç»“æŸ" and mTime()<blackboard:getValue("è¦åˆ·å¤šä¹…")+blackboard:getValue("å¯åŠ¨æ—¶é—´")
+	end
+	)
 
-sysLog(string.format("From:%s,Behavior:%s,¼Æ´Î=%d","½áÊøÔËĞĞ","/",bk:getValue("¼Æ´Î")))
+sysLog("è§¦å‘å™¨è®¾å®šå®Œæ¯•")
+--[[             åœºæ™¯å†…çš„è¡Œä¸ºè®¾å®š               ]]
+
+è¿”å›ä¸»ç•Œé¢:getDoingBehavior():setServer(
+	function(blackboard)
+		sysLog(string.format("ä»\"%s\"æ¸¸æˆåœºæ™¯è¿”å›äº†\"ä¸»ç•Œé¢\"",blackboard:getValue("å½“å‰æ¸¸æˆåœºæ™¯")))
+		blackboard:setValue("å½“å‰æ¸¸æˆåœºæ™¯","ä¸»ç•Œé¢")
+	end
+	)
+è¿›å…¥å¾¡é­‚:getDoingBehavior():setServer(
+	function(blackboard)
+		sysLog(string.format("è¿›å…¥äº†\"%s\"Scene,ç•Œé¢å³å°†è½¬æ¢ä¸º\"%s\"","è¿›å…¥å¾¡é­‚","å¾¡é­‚å…³å¡é€‰æ‹©"))
+		blackboard:setValue("å½“å‰æ¸¸æˆåœºæ™¯","å¾¡é­‚å…³å¡é€‰æ‹©")
+	end
+	)
+è¿›å…¥å¾¡é­‚å…³å¡:getDoingBehavior():setServer(
+	function(blackboard)
+		sysLog(string.format("è¿›å…¥äº†\"%s\"Scene,å½“å‰ä½“åŠ›%d,å°è¯•è¿›å…¥æˆ˜æ–—","è¿›å…¥å¾¡é­‚å…³å¡",blackboard:getValue("ä½“åŠ›")))
+		if blackboard:getValue("ä½“åŠ›")>16 then
+			blackboard:setValue("å½“å‰æ¸¸æˆåœºæ™¯","æˆ˜æ–—å†…")
+		else
+			blackboard:setValue("å½“å‰æ¸¸æˆåœºæ™¯","ä½“åŠ›ä¸è¶³")
+		end
+	end
+	)
+ä½“åŠ›ä¸è¶³:getDoingBehavior():setServer(
+	function(blackboard)
+		sysLog(string.format("è¿›å…¥äº†\"%s\"Scene,å½“å‰ä½“åŠ›%d,æ˜¯å¦å¯ä»¥ä¹°ä½“åŠ›%s","ä½“åŠ›ä¸è¶³",blackboard:getValue("ä½“åŠ›"),tostring(blackboard:getValue("æ˜¯å¦ä¹°ä½“åŠ›"))))
+		if blackboard:getValue("æ˜¯å¦ä¹°ä½“åŠ›") then
+			blackboard:setValue("ä½“åŠ›",blackboard:getValue("ä½“åŠ›")+50)--ä¹°ä½“åŠ›
+			sysLog("è´­ä¹°äº†50ç‚¹ä½“åŠ›")
+			blackboard:setValue("å½“å‰æ¸¸æˆåœºæ™¯","å¾¡é­‚å…³å¡é€‰æ‹©")
+		else
+			sysLog("ä½“åŠ›ä¸è¶³,é€€å‡ºè¿è¡Œ")
+			lua_exit()
+		end
+	end
+	)
+ç­‰å¾…æˆ˜æ–—ç»“æŸ:getDoingBehavior():setServer(
+	function(blackboard)
+		sysLog(string.format("è¿›å…¥äº†\"%s\"Scene","ç­‰å¾…æˆ˜æ–—ç»“æŸ"))
+		delay(2)
+		sysLog(string.format("æˆ˜æ–—ç»“æŸ,æ¸¸æˆè¿›å…¥æˆ˜æ–—ç»“æŸåœºæ™¯"))
+		blackboard:setValue("å½“å‰æ¸¸æˆåœºæ™¯","æˆ˜æ–—ç»“æŸ")
+	end
+	)
+å¾¡é­‚å…³å¡ç»“ç®—:getDoingBehavior():setServer(
+	function(blackboard)
+		blackboard:setValue("ä½“åŠ›",blackboard:getValue("ä½“åŠ›")-16)--æ‰£ä½“åŠ›
+		blackboard:setValue("å·²åˆ·æ¬¡æ•°",blackboard:getValue("å·²åˆ·æ¬¡æ•°")+1)--åŠ æ¬¡æ•°
+		sysLog(string.format("è¿›å…¥äº†\"%s\"Scene,æ‰£é™¤16ç‚¹ä½“åŠ›,å·²åˆ·æ¬¡æ•°%d","å¾¡é­‚å…³å¡ç»“ç®—",blackboard:getValue("å·²åˆ·æ¬¡æ•°")))
+		blackboard:setValue("å½“å‰æ¸¸æˆåœºæ™¯","å¾¡é­‚å…³å¡é€‰æ‹©")
+	end
+	)
+
+sysLog("è¡Œä¸ºè®¾å®šå®Œæ¯•")
+
+
+ä¸»æµç¨‹:run()
+
+
+
+
