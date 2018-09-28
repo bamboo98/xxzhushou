@@ -106,24 +106,27 @@ sysLog("场景流程初始化完毕")
 	end
 	)
 
-sysLog("触发器设定完毕")
+sysLog(mTime().."触发器设定完毕")
 --[[             场景内的行为设定               ]]
 
 返回主界面:getDoingBehavior():setServer(
 	function(blackboard)
-		sysLog(string.format("从\"%s\"游戏场景返回了\"主界面\"",blackboard:getValue("当前游戏场景")))
+		--delay(0.5)
+		sysLog(mTime()..string.format("从\"%s\"游戏场景返回了\"主界面\"",blackboard:getValue("当前游戏场景")))
 		blackboard:setValue("当前游戏场景","主界面")
 	end
 	)
 进入御魂:getDoingBehavior():setServer(
 	function(blackboard)
-		sysLog(string.format("进入了\"%s\"Scene,界面即将转换为\"%s\"","进入御魂","御魂关卡选择"))
+		--delay(0.5)
+		sysLog(mTime()..string.format("进入了\"%s\"Scene,界面即将转换为\"%s\"","进入御魂","御魂关卡选择"))
 		blackboard:setValue("当前游戏场景","御魂关卡选择")
 	end
 	)
 进入御魂关卡:getDoingBehavior():setServer(
 	function(blackboard)
-		sysLog(string.format("进入了\"%s\"Scene,当前体力%d,尝试进入战斗","进入御魂关卡",blackboard:getValue("体力")))
+		--delay(0.5)
+		sysLog(mTime()..string.format("进入了\"%s\"Scene,当前体力%d,尝试进入战斗","进入御魂关卡",blackboard:getValue("体力")))
 		if blackboard:getValue("体力")>16 then
 			blackboard:setValue("当前游戏场景","战斗内")
 		else
@@ -133,7 +136,8 @@ sysLog("触发器设定完毕")
 	)
 体力不足:getDoingBehavior():setServer(
 	function(blackboard)
-		sysLog(string.format("进入了\"%s\"Scene,当前体力%d,是否可以买体力%s","体力不足",blackboard:getValue("体力"),tostring(blackboard:getValue("是否买体力"))))
+		--delay(0.5)
+		sysLog(mTime()..string.format("进入了\"%s\"Scene,当前体力%d,是否可以买体力%s","体力不足",blackboard:getValue("体力"),tostring(blackboard:getValue("是否买体力"))))
 		if blackboard:getValue("是否买体力") then
 			blackboard:setValue("体力",blackboard:getValue("体力")+50)--买体力
 			sysLog("购买了50点体力")
@@ -146,22 +150,23 @@ sysLog("触发器设定完毕")
 	)
 等待战斗结束:getDoingBehavior():setServer(
 	function(blackboard)
-		sysLog(string.format("进入了\"%s\"Scene","等待战斗结束"))
+		sysLog(mTime()..string.format("进入了\"%s\"Scene","等待战斗结束"))
 		delay(2)
-		sysLog(string.format("战斗结束,游戏进入战斗结束场景"))
+		sysLog(mTime()..string.format("战斗结束,游戏进入战斗结束场景"))
 		blackboard:setValue("当前游戏场景","战斗结束")
 	end
 	)
 御魂关卡结算:getDoingBehavior():setServer(
 	function(blackboard)
+		--delay(0.5)
 		blackboard:setValue("体力",blackboard:getValue("体力")-16)--扣体力
 		blackboard:setValue("已刷次数",blackboard:getValue("已刷次数")+1)--加次数
-		sysLog(string.format("进入了\"%s\"Scene,扣除16点体力,已刷次数%d","御魂关卡结算",blackboard:getValue("已刷次数")))
+		sysLog(mTime()..string.format("进入了\"%s\"Scene,扣除16点体力,已刷次数%d","御魂关卡结算",blackboard:getValue("已刷次数")))
 		blackboard:setValue("当前游戏场景","御魂关卡选择")
 	end
 	)
 
-sysLog("行为设定完毕")
+sysLog(mTime().."行为设定完毕")
 
 
 主流程:run()

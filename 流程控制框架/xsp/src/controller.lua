@@ -3,6 +3,12 @@ _addToDelay_ = function() end
 _addToTouchDown_ = function () end
 _addToTouchUp_ = function () end
 
+local function doFunction(f,blackboard)
+    while f do
+        f = coroutine.yield(f(blackboard))
+    end
+end
+
 Blackboard={}
 
 function Blackboard:new()--创建黑板对象
@@ -69,16 +75,19 @@ function Behavior:setServer(ServerFunction)--这里传入Function没有参数,�
 end
 
 function Behavior:run()
+	local flag,ret
 	self:setTigger()--设置检查器
-	if self.co==nil or not self.continuity or coroutine.status(self.co)=="dead" then--重新建立协程
-		self.co=coroutine.create(self.server)
-		coroutine.resume(self.co,self.blackboard)--开始运行协程,并且传入黑板数据
-		if coroutine.status(self.co)=="dead" then 
-			--sysLog("协程运行结束,销毁对象")
-			self.co=nil 
+	if self.co==nil then
+		self.co=coroutine.create(doFunction)
+	end
+	flag,ret=coroutine.resume(self.co,self.server,self.blackboard)--开始运行协程,并且传入黑板数据
+	if flag and type(ret)=="string" and ret=="_stop_" then--是手动中断,不是正常运行结束
+		if not self.continuity then--不需要继续运行的协程,直接销毁
+			self.co=nil
 		end
-	else--重新唤起协程
-		coroutine.resume(self.co)
+	elseif not flag then--错误停止
+		sysLog("协程内发生错误,错误信息"..ret)
+		lua_exit()
 	end
 end
 
@@ -89,7 +98,7 @@ end
 function Behavior.stop()--停止当前行为
 	if coroutine.isyieldable() then
 		Behavior.resetTigger()--重置检查器
-		coroutine.yield()
+		coroutine.yield("_stop_")
 	end
 end
 
