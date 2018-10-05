@@ -213,7 +213,11 @@ Sequence={}
 function Sequence:new()
 	local o={
 		_tag="Sequence",
-		scenes={}
+		scenes={},
+		isLoop=false,
+		maxCount=-1,
+		maxTime=-1,
+		loopIntervalTime=0
 	}
 	setmetatable(o,{__index = self} )
 	return o
@@ -221,16 +225,44 @@ end
 
 function Sequence:run()
 	local flag=true
-	while flag do
+	local loopCount,loopTime
+	repeat
+		if flag then --如果上次遍历scene成功执行,则重置循环时间和次数
+			loopTime=mTime()
+			loopCount=0
+		end
 		for _,v in ipairs(self.scenes) do--遍历scene执行run函数
 			flag=v:run()
-			if flag then break end
+			if flag then
+				break 
+			end
 		end
-	end
+		loopCount=loopCount+1
+		if self.loopIntervalTime>0 then slp(loopIntervalTime) end
+	until((not flag and not self.isLoop) or ((self.isLoop and not flag) and (loopTime+self.maxTime<mTime() or loopCount>self.maxCount)))
 end
 
 function Sequence:addScene(Scene)
 	if Scene._tag and Scene._tag=="Scene" then
 		table.insert(self.scenes,Scene)
 	end
+end
+
+
+--[[
+	Sequence:setLoop(isLoop,LoopCount,LoopTime,IntervalTime)
+	设置场景检测的循环方式
+	参数:	isLoop		Bool型,是否循环
+			LoopCount 	循环次数
+			LoopTime 	循环最长时间
+			IntervalTime每次循环的间隔
+]]
+function Sequence:setLoop(isLoop,LoopCount,LoopTime,IntervalTime)
+	LoopCount=LoopCount or -1
+	LoopTime=LoopTime or -1
+	IntervalTime=IntervalTime or 0
+	self.isLoop=isLoop
+	self.maxCount=LoopCount
+	self.maxTime=LoopTime
+	self.loopIntervalTime=IntervalTime
 end
